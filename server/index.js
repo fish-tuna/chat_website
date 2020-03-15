@@ -72,6 +72,20 @@ io.on("connection", socket => {
     console.log(socket.room);
   });
 
+  socket.on("call-user", data => {
+    socket.to(data.to).emit("call-made", {
+      offer: data.offer,
+      socket: socket.id
+    });
+  });
+
+  socket.on("make-answer", data => {
+    socket.to(data.to).emit("answer-made", {
+      socket: socket.id,
+      answer: data.answer
+    });
+  });
+
   socket.on("sendMessage", (message, callback) => {
     const user = getUser(socket.id);
 
