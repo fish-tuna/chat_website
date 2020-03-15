@@ -5,6 +5,7 @@ import EmojiButton from "./EmojiButton";
 import TextContainer from "./TextContainer";
 import Messages from "./Messages";
 import Picker from "emoji-picker-react";
+import VideoScreen from "./VideoScreen";
 
 let socket;
 
@@ -73,6 +74,19 @@ export default function ChatScreen({ location }) {
 
   //console.log(message);
 
+  navigator.getUserMedia(
+    { video: true, audio: true },
+    stream => {
+      const localVideo = document.getElementById("local-video");
+      if (localVideo) {
+        localVideo.srcObject = stream;
+      }
+    },
+    error => {
+      console.warn(error.message);
+    }
+  );
+
   return (
     <div id="main">
       <header>
@@ -81,7 +95,7 @@ export default function ChatScreen({ location }) {
         </h1>
       </header>
       <div id="videobox">
-        <h2>test</h2>
+        <VideoScreen />
       </div>
       <div id="chatdisplaybox">
         <Messages messages={messages} name={name} />

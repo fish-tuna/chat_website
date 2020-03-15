@@ -7,6 +7,23 @@ const PORT = process.env.PORT || 5000;
 
 const router = require("./router");
 
+//webrtc setup start
+var mediaConstraints = {
+  audio: true, // We want an audio track
+  video: {
+    aspectRatio: {
+      ideal: 1.333333 // 3:2 aspect is preferred
+    }
+  }
+};
+
+var myUsername = null;
+var targetUsername = null; // To store username of other peer
+var myPeerConnection = null; // RTCPeerConnection
+var transceiver = null; // RTCRtpTransceiver
+var webcamStream = null; // MediaStream from webcam
+//webrtc setup end
+
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -36,9 +53,9 @@ io.on("connection", socket => {
       socket.to(roomid).emit("message", {
         text: `Welcome, ${name}! Waiting for another user!`
       });
-      io.to(socket.id).emit("message", {
+      /*io.to(socket.id).emit("message", {
         text: `Welcome, ${name}! Waiting for another user!`
-      });
+      });*/
       tfswitch = false;
       prevName = name;
     } else {
@@ -63,6 +80,9 @@ io.on("connection", socket => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected!");
+    socket.to(roomid).emit("message", {
+      text: "a user has disconnected."
+    });
   });
 });
 
