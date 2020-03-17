@@ -30,6 +30,8 @@ const io = socketio(server);
 let tfswitch = true;
 let roomid;
 let prevName;
+let currentFalse;
+let keyStore = new Map();
 
 io.on("connection", socket => {
   console.log("New connection!");
@@ -49,8 +51,12 @@ io.on("connection", socket => {
       console.log(tfswitch);
       roomid = socket.id;
       console.log(roomid);
+      keyStore.set(roomid, roomid);
       socket.join(roomid);
-      socket.to(roomid).emit("message", {
+      //start peer connection process on first user joining
+      //i get an error on the below line if roomid is in parentheses
+      io.to(roomid).emit("triggerInit");
+      io.to(roomid).emit("message", {
         text: `Welcome, ${name}! Waiting for another user!`
       });
       /*io.to(socket.id).emit("message", {
@@ -59,44 +65,49 @@ io.on("connection", socket => {
       tfswitch = false;
       prevName = name;
     } else {
-      socket.broadcast
-        .to(roomid)
-        .emit("message", { text: `${name} has joined!` });
-      socket.join(roomid);
-      socket.broadcast.to(socket.id).emit("message", {
+      currentFalse = socket.id;
+      keyStore.set(socket.id, roomid);
+      io.to(roomid).emit("message", { text: `${name} has joined!` });
+      io.to(socket.id).emit("message", {
         text: `Welcome, ${name}! You have joined ${prevName}!`
       });
 
+      socket.join(roomid);
+      //this message below excludes the second joiner
+      //socket.broadcast.to(roomid).emit("message", { text: "success" });
       tfswitch = true;
     }
     console.log(socket.room);
   });
-
-  socket.on("call-user", data => {
-    socket.to(data.to).emit("call-made", {
-      offer: data.offer,
-      socket: socket.id
-    });
+  //wait for second user to join before emitting receiveInit event
+  //consider optimization, also this async solution might not even work
+  //parentheses around async data parameter might not be neeeded
+  socket.on("triggerInitSuccess", async data => {
+    while (true) {
+      if (!tfswitch) {
+        io.to(currentFalse).emit("receiveInit", data);
+        return;
+      }
+      await null;
+    }
   });
-
-  socket.on("make-answer", data => {
-    socket.to(data.to).emit("answer-made", {
-      socket: socket.id,
-      answer: data.answer
-    });
+  //this might only work for 2 people, for more people using website there might be issue
+  socket.on("receiveInitSuccess", data => {
+    socket.broadcast.to(roomid).emit("receiveResponse", data);
   });
-
+  //don't need this callback parameter? i removed it and nothing seemed to happen
   socket.on("sendMessage", (message, callback) => {
-    const user = getUser(socket.id);
-
-    io.to(socket.id).emit("message", { text: message });
+    //const user = getUser(socket.id);
+    io.to(keyStore.get(socket.id)).emit("message", { text: message });
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected!");
-    socket.to(roomid).emit("message", {
-      text: "a user has disconnected."
+    io.to(socket.id).emit("message", {
+      text:
+        "your chat partner has disconnected. Return to the homepage. Philip needs to implement something more streamlined here."
     });
+    keyStore.delete(socket.id);
   });
 });
 
