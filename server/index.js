@@ -55,7 +55,7 @@ io.on("connection", socket => {
       socket.join(roomid);
       //start peer connection process on first user joining
       //i get an error on the below line if roomid is in parentheses
-      io.to(roomid).emit("triggerInit");
+      io.to(socket.id).emit("triggerInit");
       io.to(roomid).emit("message", {
         text: `Welcome, ${name}! Waiting for another user!`
       });
@@ -83,9 +83,11 @@ io.on("connection", socket => {
   //consider optimization, also this async solution might not even work
   //parentheses around async data parameter might not be neeeded
   socket.on("triggerInitSuccess", async data => {
+    console.log("one");
     while (true) {
       if (!tfswitch) {
         io.to(currentFalse).emit("receiveInit", data);
+        console.log("two");
         return;
       }
       await null;
