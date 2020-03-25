@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import Picker from "emoji-picker-react";
+import React from "react";
 import EmojiSelect from "./EmojiSelect";
-import smileylogo from "./smileylogo.png";
 
 export default class EmojiButton extends React.Component {
   constructor(props) {

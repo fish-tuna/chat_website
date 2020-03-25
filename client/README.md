@@ -1,3 +1,5 @@
+This project uses the socket.io and simple-peer libraries to create a video and text chat application, connecting multiple pairs of users one-to-one. Users are not able to directly choose their chat partner, hence the name "randomchat". Throughout this application's code, clients are referred to as "first" or "second". This denotes a client's order of connection within its pair.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 This project uses the emoji-picker-react library. Its copyright license is given below this sentence, and its GitHub can be found here: https://github.com/ealush/emoji-picker-react
