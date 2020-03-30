@@ -4,21 +4,13 @@ peer connection could likely improve scalability.*/
 
 const express = require("express");
 const socketio = require("socket.io");
-const http = require("http");
+const https = require("https");
 const router = require("./router");
-//
-const morgan = require("morgan");
-const cors = require("cors");
-//
+
 const PORT = process.env.PORT || 5000;
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(app);
 const io = socketio(server);
-
-///
-app.use(morgan("combined"));
-app.use(cors());
-///
 
 let boolSwitch = true;
 let firstID;

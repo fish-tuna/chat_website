@@ -8,9 +8,6 @@ import io from "socket.io-client";
 import EmojiButton from "./EmojiButton";
 import Peer from "simple-peer";
 
-//import { Input } from "semantic-ui-react";
-//import "./index.css";
-
 let socket;
 
 export default function ChatScreen({ location }) {
@@ -18,7 +15,7 @@ export default function ChatScreen({ location }) {
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   //server connection for socket
-  const ENDPOINT = "ec2-18-223-135-94.us-east-2.compute.amazonaws.com:5000";
+  const ENDPOINT = "ip-172-31-44-8.us-east-2.compute.internal:5000";
   //use hooks for video source
   const localVideo = useRef(null);
   const remoteVideo = useRef(null);
@@ -43,17 +40,8 @@ export default function ChatScreen({ location }) {
   }, [ENDPOINT, location.search]);
   /*use hooks to handle socket message listener, display received messages (which are all 
   concatenated together into one big string) in div "chatdisplaybox".*/
-  //NEEDS REFACTOR AND COMMENT
-  useEffect(() => {
-    //const messageHandler = message => {
-    //  if (messages) {
-    //    setMessages(messages + "\n" + message.text);
-    //  } else {
-    //    setMessages(message.text);
-    //  }
-    //
-    //};
 
+  useEffect(() => {
     const chatBottomElement = document.getElementById("chat-bottom-anchor");
     const chatBoxElement = document.getElementById("chat-display-box");
     //automatically scroll to bottom on new message
@@ -97,6 +85,7 @@ export default function ChatScreen({ location }) {
       socket.off("message", messageHandler);
     };
   }, [messages]);
+
   //use hooks to handle socket listeners for peer connection
   useEffect(() => {
     /*On first client connection, server sends "triggerInit" socket event to the first client, 
