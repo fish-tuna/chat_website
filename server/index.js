@@ -35,7 +35,7 @@ io.on("connection", socket => {
       video/audio stream and send its SDP data to the server.*/
       io.to(socket.id).emit("triggerInit");
       //emit welcome message to first client's text chat
-      io.to(firstID).emit("message", {
+      io.to(socket.id).emit("message", {
         text: `Welcome, ${name}! Waiting for another user!`
       });
       //set boolSwitch to false for the second client
@@ -61,7 +61,6 @@ io.on("connection", socket => {
       //set boolSwitch back to true for the next first client
       boolSwitch = true;
     }
-    console.log(socket.room);
   });
   /*Once the first client has its SDP data, it emits a "triggerInitSuccess" event. 
   The server checks for the second client's connection every 500ms by checking the 
@@ -105,6 +104,15 @@ io.on("connection", socket => {
     }
   });
 });
+
+//log number of online users every 5 minutes
+
+function logUsers() {
+  console.log(keyStore.size + " users currently connected to a chat partner.");
+  setTimeout(logUsers, 300000);
+}
+
+setTimeout(logUsers, 300000);
 
 app.use(router);
 

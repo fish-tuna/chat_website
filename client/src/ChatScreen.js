@@ -1,20 +1,29 @@
+//Read README.md and ../../server/index.js first to understand this code better
+
+//"getelementbyid" refs in this code need refactored to hooks
+
 import React, { useState, useEffect, useRef } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
 import EmojiButton from "./EmojiButton";
-import Messages from "./Messages";
 import Peer from "simple-peer";
+
+//import { Input } from "semantic-ui-react";
+//import "./index.css";
 
 let socket;
 
 export default function ChatScreen({ location }) {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState("");
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
+  //server connection for socket
   const ENDPOINT = "localhost:5000";
+  //use hooks for video source
   const localVideo = useRef(null);
   const remoteVideo = useRef(null);
   const peerStorage = useRef(null);
+
   useEffect(() => {
     //get user-input name from URL
     const { name } = queryString.parse(location.search);
@@ -26,21 +35,72 @@ export default function ChatScreen({ location }) {
       }
     });
 
+    //emit socket disconnect event on component unmount
     return () => {
       socket.emit("disconnect");
-      socket.off();
+      socket.close();
     };
   }, [ENDPOINT, location.search]);
-  //use hooks to handle socket listener
+  /*use hooks to handle socket message listener, display received messages (which are all 
+  concatenated together into one big string) in div "chatdisplaybox".*/
+  //NEEDS REFACTOR AND COMMENT
   useEffect(() => {
-    socket.on("message", message => {
-      setMessages([...messages, message]);
-    });
+    //const messageHandler = message => {
+    //  if (messages) {
+    //    setMessages(messages + "\n" + message.text);
+    //  } else {
+    //    setMessages(message.text);
+    //  }
+    //
+    //};
+
+    const chatBottomElement = document.getElementById("chat-bottom-anchor");
+    const chatBoxElement = document.getElementById("chat-display-box");
+    //automatically scroll to bottom on new message
+    const scrollWhenSpam = () => {
+      chatBottomElement.scrollIntoView({ behavior: "smooth" });
+      if (
+        !(
+          chatBoxElement.scrollHeight - chatBoxElement.scrollTop ===
+          chatBoxElement.clientHeight
+        )
+      ) {
+        chatBottomElement.scrollIntoView({ behavior: "smooth" });
+        setTimeout(scrollWhenSpam, 100);
+      }
+    };
+    //socket.on "message" callback function, handle received message
+    const messageHandler = message => {
+      if (
+        chatBoxElement.scrollHeight - chatBoxElement.scrollTop ===
+        chatBoxElement.clientHeight
+      ) {
+        if (messages) {
+          setMessages(messages + "\n" + message.text);
+        } else {
+          setMessages(message.text);
+        }
+        scrollWhenSpam();
+      } else {
+        if (messages) {
+          setMessages(messages + "\n" + message.text);
+        } else {
+          setMessages(message.text);
+        }
+      }
+    };
+
+    socket.on("message", messageHandler);
+
+    //prevent multiplication of message listener instances
+    return () => {
+      socket.off("message", messageHandler);
+    };
   }, [messages]);
-  //use hooks to handle socket listeners
+  //use hooks to handle socket listeners for peer connection
   useEffect(() => {
     /*On first client connection, server sends "triggerInit" socket event to the first client, 
-initiating local video/audio stream and starting the peer signaling process.*/
+    initiating local video/audio stream and starting the peer signaling process.*/
     socket.on("triggerInit", data => {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -66,8 +126,8 @@ initiating local video/audio stream and starting the peer signaling process.*/
         });
     });
     /*Once second client is connected, server sends "receiveInit" socket event to the second client,
-initiating local video/audio stream, receiving SDP signaling data from the first client via server, 
-and continuing the peer signaling process.*/
+    initiating local video/audio stream, receiving SDP signaling data from the first client via server, 
+    and continuing the peer signaling process.*/
     socket.on("receiveInit", initiatorSDP => {
       console.log("init received!!");
       navigator.mediaDevices
@@ -93,19 +153,16 @@ and continuing the peer signaling process.*/
         });
     });
     /*first client receives SDP signaling data from the second client via server. The two peers are 
-now connected, and are transmitting video/audio streams.*/
+    now connected, and are transmitting video/audio streams.*/
     socket.on("receiveResponse", responderSDP => {
       console.log("response received");
-      //this line below maybe not needed
-      const peer = peerStorage.current;
-      peer.signal(responderSDP);
-      peer.on("stream", stream => {
-        // got remote video stream, now let's show it in a video tag
+      peerStorage.current.signal(responderSDP);
+      peerStorage.current.on("stream", stream => {
         remoteVideo.current.srcObject = stream;
       });
     });
   }, []);
-
+  //function handles message sending event
   const sendMessage = event => {
     event.preventDefault();
     if (message) {
@@ -113,82 +170,64 @@ now connected, and are transmitting video/audio streams.*/
         setMessage("")
       );
     }
-    console.log({ name });
   };
-
+  //function is used to send message from input field when user inputs "enter"
   const onEnter = event => {
     if (event.key === "Enter") {
       sendMessage(event);
       setMessage("");
     }
   };
+  //function is used to send message from input field when button adjacent to input field is clicked
   const onClicking = event => {
     sendMessage(event);
     setMessage("");
   };
-
-  /*const updateInputWithEmoji = (event, emojiObject) => {
-    document.getElementById("text-entry").value += emojiObject.emoji;
-    setMessage(message + emojiObject.emoji);
-    console.log(event.target.value);
-    console.log("change triggered with emoji picker!");
-    console.log("" + emojiObject.emoji);
-  };*/
-
-  const testing = event => {
+  //handle message change in text input, prep for sending
+  const handleMessageChange = event => {
     setMessage(event.target.value);
-    console.log(event.target.value);
-    console.log("onchange triggered!");
   };
-
-  //console.log(message);
 
   return (
     <div id="main">
       <header>
         <h1>
-          <a href="localhost:3000">randomchat</a>
+          <a href="http://localhost:3000">randomchat</a>
         </h1>
       </header>
-      <div id="videobox">
-        <video
-          style={{
-            width: 240,
-            height: 240,
-            margin: 5,
-            backgroundColor: "black"
-          }}
-          ref={localVideo}
-          autoPlay
-        ></video>
-        <video
-          style={{
-            width: 240,
-            height: 240,
-            margin: 5,
-            backgroundColor: "black"
-          }}
-          ref={remoteVideo}
-          autoPlay
-        ></video>
+      <div id="video-box">
+        {/*mute audio from local stream*/}
+        <video ref={localVideo} autoPlay muted></video>
+        <video ref={remoteVideo} autoPlay></video>
       </div>
-      <div id="chatdisplaybox">
-        <Messages messages={messages} name={name} />
+
+      <div id="chat-display-box">
+        <div id="message-box">{messages}</div>
+        <div
+          style={{ float: "left", clear: "both" }}
+          id="chat-bottom-anchor"
+        ></div>
       </div>
-      <div id="chatbox">
-        <EmojiButton
-          /*passThrough={updateInputWithEmoji}*/ setMessage={setMessage}
-        />
-        <form id="form-send">
+
+      <div id="chat-input-box">
+        <EmojiButton setMessage={setMessage} />
+        <form id="form-send" className="ui action input">
           <input
             value={message}
-            onChange={/*event => setMessage(event.target.value)*/ testing}
+            onChange={handleMessageChange}
             onKeyPress={onEnter}
-            id="text-entry"
+            id="message-input"
             type="text"
-            placeholder="type a message"
+            placeholder="type a message..."
           />
-          <button type="submit" id="send-button" onClick={onClicking} />
+          <button
+            id="chat-input-box-button"
+            type="submit"
+            className="ui button"
+            onClick={onClicking}
+          >
+            <div id="test">Send</div>
+          </button>
         </form>
       </div>
     </div>

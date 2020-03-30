@@ -5,78 +5,168 @@
   text-decoration: none;
 }
 
+/* Universal selectors */
 div #main {
   display: flex;
   width: 100%;
   min-height: 100%;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
-
 header {
   width: 100%;
-  height: 15%;
+  height: 5.9%;
   min-height: 35px;
-  background-color: #101010;
+  background-color: #383838;
+  display: table;
 }
 header h1 {
-  color: white;
+  color: black;
   font: futura;
+  display: table-cell;
+  vertical-align: bottom;
 }
-
-#videobox {
-  width: 100%;
-  height: 35%;
-  min-height: 80px;
+a:hover {
+  color: white;
 }
-
-#chatdisplaybox {
-  width: 100%;
-  height: 44%;
-  min-height: 100px;
-  border: solid gray 1px;
-  overflow-y: auto;
+a:link {
+  color: white;
 }
-
-#chatbox {
-  display: flex;
-  width: 100%;
-  height: 6%;
-  min-height: 13px;
-  background-color: #dbdbdb;
-  padding: 3px 3px;
+a:visited {
+  color: white;
 }
-
-input {
-  width: 80%;
-  outline: none;
-  border: 1.5px solid #ddd;
-  padding: 5px;
-  margin: auto;
-}
-
 button {
   padding: 11px 11px;
   margin: auto 10px;
 }
 
-#emojib {
-  overflow: visible;
+/* HomeScreen selectors, all under div #main */
+
+div #everything-under-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-image: url("bimage.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+div #home-text {
+  margin-top: -7%;
+  text-align: center;
+  color: white;
+}
+div #home-input {
+  margin-top: 5%;
+}
+div #home-input input {
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+  border: none;
+}
+div #home-input #home-link {
+  margin: auto 0;
+}
+div #home-input #start-button {
+  border-top-left-radius: 0% !important;
+  border-bottom-left-radius: 0% !important;
+  background-color: white;
+  color: black;
+  border-left: 1px solid lightgray;
 }
 
-#emojibutton {
-  background-image: url("./smileylogo.png");
+/* ChatScreen selectors, all under div #main */
+#video-box {
+  width: 100%;
+  height: 55.9%;
+  min-height: 80px;
+}
+#video-box video {
+  width: 50%;
+  height: 100%;
+  background-color: black;
+}
+#chat-display-box {
+  width: 100%;
+  height: 34.2%;
+  min-height: 100px;
+  border-top: solid gray 1px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: medium;
+}
+#chat-display-box #message-box {
+  padding: 10px;
+}
+#chat-input-box {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  height: 4%;
+  min-height: 13px;
+}
+#chat-input-box form {
+  display: flex;
+}
+#chat-input-box #form-send {
+  width: 100%;
+}
+#chat-input-box #form-send #chat-input-box-button {
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+}
+#chat-input-box #form-send #chat-input-box-button #test {
+  /*text not centered when browser window made smaller */
+  /* this makes the text too high: line-height: 3%; */
+  line-height: 3%;
+}
+#chat-input-box #message-input {
+  border-top-left-radius: 0% !important;
+  border-bottom-left-radius: 0% !important;
+  border-left: none;
+}
+
+/* EmojiButton selectors */
+#emoji-div {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+#emoji-div #emoji-button {
+  background-image: url("./1F600_color.png");
   background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  margin-right: 0px;
+}
+#emoji-div #emoji-button-pressed {
+  background-image: url("./1F600_color.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+  border-top-left-radius: 0%;
+  border-bottom-left-radius: 0%;
+  margin-right: 0px;
 }
 
-#emojibuttonpressed {
-}
-
-#emojis {
+/* EmojiSelect selectors */
+#emoji-select {
   position: absolute;
   margin: -324px auto;
-}
-
-form {
-  display: flex;
 }

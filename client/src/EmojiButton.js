@@ -19,23 +19,29 @@ export default class EmojiButton extends React.Component {
     let button;
     if (this.state.clickStatus) {
       button = (
-        <div id="emojib">
+        <div id="emoji-div">
           <EmojiSelect
             /*passThrough={this.props.passThrough}*/ setMessage={
               this.props.setMessage
             }
           />
           <button
-            id="emojibuttonpressed"
+            id="emoji-button-pressed"
             type="button"
             onClick={this.handleClick}
+            className="ui button"
           />
         </div>
       );
     } else {
       button = (
-        <div id="emojib">
-          <button id="emojibutton" type="button" onClick={this.handleClick} />
+        <div id="emoji-div">
+          <button
+            id="emoji-button"
+            type="button"
+            onClick={this.handleClick}
+            className="ui button"
+          />
         </div>
       );
     }
