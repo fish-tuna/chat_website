@@ -18,7 +18,7 @@ export default function ChatScreen({ location }) {
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   //server connection for socket
-  const ENDPOINT = "localhost:5000";
+  const ENDPOINT = "ec2-18-223-135-94.us-east-2.compute.amazonaws.com:5000";
   //use hooks for video source
   const localVideo = useRef(null);
   const remoteVideo = useRef(null);

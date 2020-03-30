@@ -21,9 +21,7 @@ export default function HomeScreen() {
       </header>
       <div id="everything-under-header">
         <div id="home-text">
-          <h2>
-            Video and/or text chat with a random person, anywhere in the world.
-          </h2>
+          <h2>Video and/or text chat with a random person!</h2>
         </div>
         <div className="ui input" id="home-input">
           <input

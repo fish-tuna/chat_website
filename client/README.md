@@ -2,7 +2,7 @@ This project uses the socket.io and simple-peer libraries to create a video and 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-This project uses the emoji-picker-react library. Its copyright license is given below this sentence, and its GitHub can be found here: https://github.com/ealush/emoji-picker-react
+All libraries used in this project fall under the MIT License:
 
 (The MIT License)
 
