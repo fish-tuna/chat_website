@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import bimage from "./bimage.jpg";
 
 export default function HomeScreen() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState("loading");
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [btn, setBtn] = useState(null);
 
   //programmatically click button when user types "enter" in input field
@@ -11,7 +13,7 @@ export default function HomeScreen() {
       btn.click();
     }
   };
-
+  //style={imageLoaded ? {} : { display: "none", zIndex: -15 }}
   return (
     <div id="main">
       <header>
@@ -19,6 +21,10 @@ export default function HomeScreen() {
           <a href="http://localhost:3000">randomchat</a>
         </h1>
       </header>
+      <div id={imageLoaded ? "clear-background" : "hidden-clear-background"}>
+        <img onLoad={() => setImageLoaded(true)} src={bimage}></img>
+      </div>
+      <div id="blurred-background"></div>
       <div id="everything-under-header">
         <div id="home-text">
           <h2>Video and/or text chat with a random person!</h2>

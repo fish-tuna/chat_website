@@ -13,6 +13,7 @@ div #main {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 header {
   width: 100%;
@@ -42,7 +43,44 @@ button {
 }
 
 /* HomeScreen selectors, all under div #main */
-
+div #blurred-background {
+  overflow: hidden;
+  z-index: -10;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  filter: blur(10px);
+  -webkit-filter: blur(20px);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1);
+  background-image: url("bimagesmall.png");
+  overflow: hidden;
+}
+div #hidden-clear-background {
+  display: none;
+}
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+div #clear-background {
+  z-index: -5;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
+}
 div #everything-under-header {
   display: flex;
   flex-direction: column;
@@ -51,7 +89,7 @@ div #everything-under-header {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-image: url("bimage.jpg");
+
   background-size: cover;
   background-repeat: no-repeat;
 }
