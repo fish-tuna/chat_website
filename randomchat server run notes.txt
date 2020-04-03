@@ -1,0 +1,1 @@
+pm2 runs client (pm2 start npm -- start (from client dir)) while forever runs server (forever start index.js (from server dir))
