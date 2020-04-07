@@ -96,7 +96,7 @@ export default function ChatScreen({ location }) {
         .then(stream => {
           console.log("init triggered");
           localVideo.current.srcObject = stream;
-          const peer = new Peer({ initiator: true, stream: stream });
+          const peer = new Peer({ initiator: true, stream: stream, trickle: false });
 
           peerStorage.current = peer;
 
@@ -125,7 +125,7 @@ export default function ChatScreen({ location }) {
           console.log("init received");
           console.log(initiatorSDP);
           localVideo.current.srcObject = stream;
-          const peer = new Peer({ stream: stream });
+          const peer = new Peer({ stream: stream, trickle: false });
           peerStorage.current = peer;
           peer.on("signal", data => {
             console.log("receiveinitsuccess sent");
